@@ -22,8 +22,31 @@ void priPut(PriQueue* q, void* elem, double pri);
 int priDel(PriQueue* q, void* elem);
 
 //grafo.c
-Grafo* crear_grafo(int n, int e, double* nodos, double* aristas);
-double calcular_peso(Nodo* n1, Nodo* n2);
+typedef struct nodo_g{
+    double x;
+    double y;
+} Nodo_g;
 
+typedef struct arista{
+    Nodo_g *nodo1;
+    Nodo_g *nodo2;
+    double peso;
+    //(nodo1->x-nodo2->x)*(nodo1->x-nodo2->x) + (nodo1->y+nodo2->y)*(nodo1->y-nodo2->y)
+} Arista;
+
+typedef struct grafo{
+    int n ; // Número de nodos
+    double *nodos;
+    int e; // Número de aristas
+    double *aristas;
+} Grafo;
+
+typedef struct grafo Grafo; 
+Grafo* crear_grafo(int n, int e, double* nodos, double* aristas);
+double calcular_peso(Nodo_g* n1, Nodo_g* n2);
+
+//mergesort.c
+void merge(Arista* arr, Arista* aux, int inicio, int medio, int fin);
+void mergesort_RAM(Arista* arreglo, Arista* aux, int inicio, int fin);
 
 #endif // TAREA2_H
