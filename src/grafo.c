@@ -13,5 +13,3 @@ Grafo* crear_grafo(int n, int e, double* nodos, double* aristas) {
     return g;
 }
 
-
-

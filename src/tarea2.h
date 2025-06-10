@@ -36,9 +36,9 @@ typedef struct arista{
 
 typedef struct grafo{
     int n ; // Número de nodos
-    double *nodos;
+    Nodo_g **nodos;
     int e; // Número de aristas
-    double *aristas;
+    Arista **aristas;
 } Grafo;
 
 typedef struct grafo Grafo; 
@@ -48,5 +48,15 @@ double calcular_peso(Nodo_g* n1, Nodo_g* n2);
 //mergesort.c
 void merge(Arista* arr, Arista* aux, int inicio, int medio, int fin);
 void mergesort_RAM(Arista* arreglo, Arista* aux, int inicio, int fin);
+
+//union_find.c
+typedef struct nodo_uf {
+    Nodo_g *info;
+    //struct Nodo_uf** hijos;
+    //int num_hijos;
+    Nodo_uf *padre;
+    int size;
+} Nodo_uf;
+
 
 #endif // TAREA2_H
