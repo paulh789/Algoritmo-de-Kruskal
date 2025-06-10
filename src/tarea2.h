@@ -11,6 +11,11 @@
 
 //Funciones
 
+//sort.c
+int comparar_aristas(const void* a, const void* b);
+int compararAristasPtr(const void* a, const void* b);
+void sort_aristas(Arista** aristas, int n);
+
 //heap.c
 typedef int (*PriComparator)(void*, void*);
 typedef struct priqueue PriQueue;

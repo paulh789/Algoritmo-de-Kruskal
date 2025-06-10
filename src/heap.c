@@ -1,82 +1,105 @@
 #include "tarea2.h"
 
+// Tipo de función de comparación
+typedef int (*Comparator)(void*, void*);
 
+// Estructura del MinHeap genérico
+typedef struct Heap {
+    void** array;
+    int size;
+    int capacity;
+    Comparator cmp;
+} Heap;
 
-struct priqueue {
-    PriComparator compare;
-    int maxsize, size;
-    void **ar;
-};
-
-PriQueue* makeFullPriQueue(int iniSize, PriComparator compare) {
-    PriQueue *q = malloc(sizeof(PriQueue));
-    q->compare= compare;
-    q->maxsize= iniSize;
-    q->size= -1;
-    q->ar= malloc(iniSize*sizeof(void*));
-    return q;
+// Crea un nuevo heap con capacidad y función de comparación
+Heap* createHeap(int capacity, Comparator cmp) {
+    Heap* heap = malloc(sizeof(Heap));
+    heap->array = malloc(capacity * sizeof(void*));
+    heap->size = 0;
+    heap->capacity = capacity;
+    heap->cmp = cmp;
+    return heap;
 }
 
-typedef struct {
-    double pri;
-    void *elem;
-} PriObj;
-
-static int priCmpFun(void *elemA, void *elemB) {
-    PriObj *a= elemA;
-    PriObj *b= elemB;
-    double cmp= b->pri-a->pri;
-    return cmp>0 ? 1 : (cmp<0 ? -1 : 0);
+// Intercambia dos elementos del arreglo
+void swap(void** a, void** b) {
+    void* temp = *a;
+    *a = *b;
+    *b = temp;
 }
 
-PriQueue *makePriQueue(void) {
-    return makeFullPriQueue(16, priCmpFun);
+// Reestablece propiedad de minHeap en el índice dado
+void heapify(Heap* heap, int i) {
+    int smallest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < heap->size && heap->cmp(heap->array[left], heap->array[smallest]) < 0)
+        smallest = left;
+
+    if (right < heap->size && heap->cmp(heap->array[right], heap->array[smallest]) < 0)
+        smallest = right;
+
+    if (smallest != i) {
+        swap(&heap->array[i], &heap->array[smallest]);
+        heapify(heap, smallest);
+    }
 }
 
-void *priPeek(PriQueue *q) {
-    PriObj *priobj= fullPriPeek(q);
-    return priobj==NULL ? NULL : priobj->elem;
+// Inserta un nuevo elemento al heap
+void insertHeap(Heap* heap, void* value) {
+    if (heap->size == heap->capacity) {
+        printf("Heap overflow\n");
+        return;
+    }
+
+    int i = heap->size++;
+    heap->array[i] = value;
+
+    // Corrige posición hacia arriba
+    while (i != 0 && heap->cmp(heap->array[i], heap->array[(i - 1) / 2]) < 0) {
+        swap(&heap->array[i], &heap->array[(i - 1) / 2]);
+        i = (i - 1) / 2;
+    }
 }
 
-double priBest(PriQueue *q) {
-    PriObj *priobj= fullPriPeek(q);
-    return priobj==NULL ? 0 : priobj->pri;
-}
-
-void *priGet(PriQueue *q) {
-    PriObj *priobj= fullPriGet(q);
-    if (priobj==NULL)
+// Extrae el mínimo (raíz)
+void* extractMin(Heap* heap) {
+    if (heap->size <= 0)
         return NULL;
-    else {
-        void *res= priobj->elem;
-        free(priobj);
-        return res;
+    if (heap->size == 1) {
+        heap->size--;
+        return heap->array[0];
+    }
+
+    void* root = heap->array[0];
+    heap->array[0] = heap->array[--heap->size];
+    heapify(heap, 0);
+    return root;
+}
+
+
+// Libera el heap
+void freeHeap(Heap* heap) {
+    free(heap->array);
+    free(heap);
+}
+
+// Construir heap
+void buildHeap(Heap* heap) {
+    for (int i = (heap->size - 1) / 2; i >= 0; i--) {
+        heapify(heap, i);
     }
 }
 
-void priPut(PriQueue *q, void *elem, double pri) {
-    PriObj *priobj= malloc(sizeof(PriObj));
-    priobj->pri= pri;
-    priobj->elem= elem;
-    fullPriPut(q, priobj);
-}
+// Heapify
+Heap* heapifyFromArray(void** elems, int n, Comparator cmp) {
+    Heap* heap = malloc(sizeof(Heap));
+    heap->array = elems;     // usa el arreglo ya existente
+    heap->size = n;
+    heap->capacity = n;      // sin capacidad extra
+    heap->cmp = cmp;
 
-int priDel(PriQueue *q, void *elem) {
-    int k= 0;
-    PriObj *priobj;
-    while (k<=q->size) {
-        priobj= q->ar[k];
-        if (priobj->elem==elem)
-        break;
-        k++;
-    }
-    if (k>q->size)
-        return 1;
-
-    q->ar[k]= q->ar[q->size];
-    q->size--;
-    if (k<q->size)
-        shiftDown(q, k);
-    free(priobj);
-    return 0;
+    buildHeap(heap);         // aplica heapify al arreglo
+    return heap;
 }
