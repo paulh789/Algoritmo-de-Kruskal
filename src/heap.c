@@ -1,15 +1,10 @@
 #include "tarea2.h"
 
 // Tipo de función de comparación
-typedef int (*Comparator)(void*, void*);
+
 
 // Estructura del MinHeap genérico
-typedef struct Heap {
-    void** array;
-    int size;
-    int capacity;
-    Comparator cmp;
-} Heap;
+
 
 // Crea un nuevo heap con capacidad y función de comparación
 Heap* createHeap(int capacity, Comparator cmp) {
