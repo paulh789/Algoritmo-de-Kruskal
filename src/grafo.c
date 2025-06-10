@@ -4,7 +4,7 @@ double calcular_peso(Nodo_g* n1, Nodo_g* n2) {
     return (n1->x - n2->x)*(n1->x - n2->x) + (n1->y - n2->y)*(n1->y - n2->y);
 }
 
-Grafo* crear_grafo(int n, int e, double* nodos, double* aristas) {
+Grafo* crear_grafo(int n, int e, Nodo_g* nodos, Arista* aristas) {
     Grafo* g = (Grafo*)malloc(sizeof(Grafo));
     g->n = n;
     g->e = e;

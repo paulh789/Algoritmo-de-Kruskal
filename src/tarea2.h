@@ -42,12 +42,12 @@ typedef struct grafo{
 } Grafo;
 
 typedef struct grafo Grafo; 
-Grafo* crear_grafo(int n, int e, double* nodos, double* aristas);
+Grafo* crear_grafo(int n, int e, Nodo_g* nodos, Arista* aristas);
 double calcular_peso(Nodo_g* n1, Nodo_g* n2);
 
 //mergesort.c
-void merge(Arista* arr, Arista* aux, int inicio, int medio, int fin);
-void mergesort_RAM(Arista* arreglo, Arista* aux, int inicio, int fin);
+void merge(Arista** arr, Arista** aux, int inicio, int medio, int fin);
+void mergesort_RAM(Arista** arreglo, Arista** aux, int inicio, int fin);
 
 //union_find.c
 typedef struct nodo_uf {
