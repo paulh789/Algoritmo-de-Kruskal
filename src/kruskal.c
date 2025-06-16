@@ -2,98 +2,65 @@
 
 // (1) Sin optimización de find y usando arreglo de aristas
 Arista *kruskal_1(Grafo* g) {
-    Nodo_uf **nodos_uf = crear_uf(g->nodos, g->n); // Crear estructura de unión-find
     Arista **E = g->aristas;
-    sort_aristas(E,g->e);
-    Arista *T= malloc((g->n - 1)* sizeof(Arista)); // Árbol de expansión mínima
-    int contador = 0;// contador de aristas de arbol T
-    
-    while (contador < g->n - 1) {
-        for (int i = 0; i < g->e; i++) {
-            Arista *a = E[i];
-            Nodo_uf *u;
-            Nodo_uf *v;
-            for(int j = 0; j<g->n; j++){
-                if(nodos_uf[j]->info == a->nodo1){
-                    u= nodos_uf[j];
-                }
-                if(nodos_uf[j]->info == a->nodo2){
-                    v = nodos_uf[j];
-                }
-            }
-            Nodo_g *x=find_normal(u);
-            Nodo_g *y=find_normal(v);
-            if (x!=y){ 
-                T[contador] = *a; // Añadir arista al árbol T
-                contador++;
-                union_uf(x, y); // Unir los nodos
-            }
+    qsort(E, g->e, sizeof(Arista*), comparar_aristas_ptr); //ordenar aristas con quicksort
+    Arista *T = malloc((g->n - 1) * sizeof(Arista)); //árbol cobertor mínimo
+    int contador = 0; //contador de aristas del árbol T
+    int i = 0;
+    while (i < g->e && contador < g->n - 1) {
+        Arista *arista = E[i]; //obtener arista
+        //find de los nodos de la arista
+        Nodo *x = find_normal(arista->nodo1);
+        Nodo *y = find_normal(arista->nodo2);
+        if (x != y) { 
+            T[contador] = *arista; //añadir arista al árbol T
+            contador++;
+            union_(x, y); //hacer union de los nodos representantes
         }
+        i++;
     }
     return T;
 }
 
 // (2) Sin optimización de find y usando heap
 Arista *kruskal_2(Grafo* g) {
-    Nodo_uf **nodos_uf = crear_uf(g->nodos, g->n); // Crear estructura de unión-find
-    Heap **E = heapifyFromArray(g->aristas, g->e, comparar_aristas_directo);
-    Arista *T= malloc((g->n - 1)* sizeof(Arista)); // Árbol de expansión mínima
-    int contador = 0;// contador de aristas de arbol T
+    Heap *E = heapifyArray((void**)g->aristas, g->e, (Comparator)comparar_aristas); //heapify del arreglo de aristas
+    Arista *T = malloc((g->n - 1) * sizeof(Arista)); //árbol cobertor mínimo
+    int contador = 0; //contador de aristas de árbol T
 
     while (contador < g->n - 1) {
-        Arista *a = extractMin(E); // Extraer la arista con menor peso
-        Nodo_uf *u;
-        Nodo_uf *v;
-        for(int j = 0; j<g->n; j++){
-            if(nodos_uf[j]->info == a->nodo1){
-                u= nodos_uf[j];
-            }
-            if(nodos_uf[j]->info == a->nodo2){
-                v = nodos_uf[j];
-            }
-        }
-        Nodo_g *x=find_normal(u);
-        Nodo_g *y=find_normal(v);
-        if (x!=y){ 
-            T[contador] = *a; // Añadir arista al árbol T
+        Arista *arista = extractMin(E); //extraer la arista con menor peso
+        //find de los nodos de la arista
+        Nodo *x = find_normal(arista->nodo1);
+        Nodo *y = find_normal(arista->nodo2);
+        if (x != y) { 
+            T[contador] = *arista; //añadir arista al árbol T
             contador++;
-            union_uf(x, y); // Unir los nodos
+            union_(x, y); //hacer union de los nodos representantes
         }
-        
     }
+    free(E);
     return T;
-
 }
 
 
 // (3) Con optimización de find y usando arreglo de aristas
 Arista *kruskal_3(Grafo* g) {
-    Nodo_uf **nodos_uf = crear_uf(g->nodos, g->n); // Crear estructura de unión-find
     Arista **E = g->aristas;
-    sort_aristas(E,g->e);
-    Arista *T= malloc((g->n - 1)* sizeof(Arista)); // Árbol de expansión mínima
-    int contador = 0;// contador de aristas de arbol T
+    qsort(E, g->e, sizeof(Arista*), comparar_aristas_ptr); //ordenar aristas con quicksort
+    Arista *T = malloc((g->n - 1) * sizeof(Arista)); //árbol cobertor mínimo
+    int contador = 0; //contador de aristas de árbol T
+    int i = 0;
     
-    while (contador < g->n - 1) {
-        for (int i = 0; i < g->e; i++) {
-            Arista *a = E[i];
-            Nodo_uf *u;
-            Nodo_uf *v;
-            for(int j = 0; j<g->n; j++){
-                if(nodos_uf[j]->info == a->nodo1){
-                    u= nodos_uf[j];
-                }
-                if(nodos_uf[j]->info == a->nodo2){
-                    v = nodos_uf[j];
-                }
-            }
-            Nodo_g *x=find_opti(u);
-            Nodo_g *y=find_opti(v);
-            if (x!=y){ 
-                T[contador] = *a; // Añadir arista al árbol T
-                contador++;
-                union_uf(x, y); // Unir los nodos
-            }
+    while (i < g->e && contador < g->n - 1) {
+        Arista *arista = E[i];
+        //find optimizado de los nodos de la arista
+        Nodo *x = find_opti(arista->nodo1);
+        Nodo *y = find_opti(arista->nodo2);
+        if (x != y) { 
+            T[contador] = *arista; //añadir arista al árbol T
+            contador++;
+            union_(x, y); //hacer union de los nodos representantes
         }
     }
     return T;
@@ -101,32 +68,21 @@ Arista *kruskal_3(Grafo* g) {
 
 // (4) Con optimización de find y usando heap
 Arista *kruskal_4(Grafo* g) {
-    Nodo_uf **nodos_uf = crear_uf(g->nodos, g->n); // Crear estructura de unión-find
-    Heap **E = heapifyFromArray(g->aristas, g->e, comparar_aristas_directo);
-    Arista *T= malloc((g->n - 1)* sizeof(Arista)); // Árbol de expansión mínima
-    int contador = 0;// contador de aristas de arbol T
+    Heap *E = heapifyArray((void**)g->aristas, g->e, (Comparator)comparar_aristas); //heapify del arreglo de aristas
+    Arista *T = malloc((g->n - 1) * sizeof(Arista)); //árbol cobertor mínimo
+    int contador = 0; //contador de aristas de arbol T
 
     while (contador < g->n - 1) {
-        Arista *a = extractMin(E); // Extraer la arista con menor peso
-        Nodo_uf *u;
-        Nodo_uf *v;
-        for(int j = 0; j<g->n; j++){
-            if(nodos_uf[j]->info == a->nodo1){
-                u= nodos_uf[j];
-            }
-            if(nodos_uf[j]->info == a->nodo2){
-                v = nodos_uf[j];
-            }
-        }
-        Nodo_g *x=find_opti(u);
-        Nodo_g *y=find_opti(v);
-        if (x!=y){ 
-            T[contador] = *a; // Añadir arista al árbol T
+        Arista *arista = extractMin(E); //extraer la arista con menor peso
+        //find optimizado de los nodos de la arista
+        Nodo *x = find_opti(arista->nodo1);
+        Nodo *y = find_opti(arista->nodo2);
+        if (x != y) { 
+            T[contador] = *arista; //añadir arista al árbol T
             contador++;
-            union_uf(x, y); // Unir los nodos
+            union_(x, y); //hacer union de los nodos representantes
         }
-        
     }
+    free(E);
     return T;
-
 }

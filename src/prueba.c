@@ -1,33 +1,44 @@
 #include "tarea2.h"
 
 int main() {
-    // Crear nodos
-    Nodo_g* n1 = crear_nodo(0, 0);
-    Nodo_g* n2 = crear_nodo(1, 5);
-    Nodo_g* n3 = crear_nodo(6, 24);
-    Nodo_g* n4 = crear_nodo(6, 2);
+    //crear puntos
+    Punto p1 = {0, 0};
+    Punto p2 = {1, 5};
+    Punto p3 = {3, 4};
+    Punto p4 = {2, 3};
 
-    // Crear aristas con distintos pesos
-    Arista* a1 = crear_arista(n1, n2);
-    Arista* a2 = crear_arista(n2, n3);
-    Arista* a3 = crear_arista(n3, n4);
-    Arista* a4 = crear_arista(n1, n4);
+    Punto *puntos[] = {&p1, &p2, &p3, &p4};
+    
+    Grafo *g1 = crear_grafo(puntos, 4);
 
-    Arista* aristas[]= {a1, a2, a3, a4};
-    int e = sizeof(aristas) / sizeof(aristas[0]);
+    printf("Aristas desordenadas:\n");
+    for (int i=0; i<g1->e; i++) {
+        printf("Peso: %.2f\n", g1->aristas[i]->peso);
+    }
 
-    Heap* heap = heapifyFromArray((void**)aristas, e, (Comparator)comparar_aristas_directo);
+    qsort(g1->aristas, g1->e, sizeof(Arista*), comparar_aristas_ptr);
+    printf("Aristas ordenadas por sort:\n");
+    for (int i=0; i<g1->e; i++) {
+        printf("Peso: %.2f\n", g1->aristas[i]->peso);
+    }
 
-    // Extraer en orden e imprimir pesos
-    printf("Extrayendo aristas ordenadas por peso:\n");
+    Grafo *g2 = crear_grafo(puntos, 4);
+
+    printf("Aristas desordenadas:\n");
+    for (int i=0; i<g2->e; i++) {
+        printf("Peso: %.2f\n", g2->aristas[i]->peso);
+    }
+
+    Heap* heap = heapifyArray((void**)g2->aristas, g2->e, (Comparator)comparar_aristas);
+    printf("Extrayendo aristas ordenadas por heap:\n");
     Arista* actual;
     while ((actual = (Arista*)extractMin(heap)) != NULL) {
         printf("Peso: %.2f\n", actual->peso);
     }
 
-    // Liberar memoria
-    free(n1); free(n2); free(n3); free(n4);
-    free(a1); free(a2); free(a3); free(a4);
+    //liberar memoria
+    destruirGrafo(g1);
+    destruirGrafo(g2);
 
     return 0;
 }

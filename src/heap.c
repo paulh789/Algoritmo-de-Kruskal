@@ -1,11 +1,5 @@
 #include "tarea2.h"
 
-// Tipo de función de comparación
-
-
-// Estructura del MinHeap genérico
-
-
 // Crea un nuevo heap con capacidad y función de comparación
 Heap* createHeap(int capacity, Comparator cmp) {
     Heap* heap = malloc(sizeof(Heap));
@@ -88,13 +82,13 @@ void buildHeap(Heap* heap) {
 }
 
 // Heapify
-Heap* heapifyFromArray(void** elems, int n, Comparator cmp) {
+Heap* heapifyArray(void** elems, int n, Comparator cmp) {
     Heap* heap = malloc(sizeof(Heap));
-    heap->array = elems;     // usa el arreglo ya existente
+    heap->array = elems;
     heap->size = n;
-    heap->capacity = n;      // sin capacidad extra
+    heap->capacity = n;
     heap->cmp = cmp;
 
-    buildHeap(heap);         // aplica heapify al arreglo
+    buildHeap(heap);
     return heap;
 }

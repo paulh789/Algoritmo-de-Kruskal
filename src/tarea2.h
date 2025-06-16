@@ -7,11 +7,21 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <stdbool.h>
 
 //Funciones
 
-//heap.c
+//==================
+// sort.c
+//==================
+
+int comparar_aristas(void* a, void* b);
+int comparar_aristas_ptr(const void* a, const void* b);
+
+//==================
+// heap.c
+//==================
+// Adaptado de https://www.geeksforgeeks.org/c/heap-in-c/
+
 typedef int (*Comparator)(void*, void*);
 typedef struct Heap {
     void** array;
@@ -27,52 +37,67 @@ void insertHeap(Heap* heap, void* value);
 void* extractMin(Heap* heap);
 void freeHeap(Heap* heap);
 void buildHeap(Heap* heap);
-Heap* heapifyFromArray(void** elems, int n, Comparator cmp);
+Heap* heapifyArray(void** elems, int n, Comparator cmp);
  
 
-//grafo.c
-typedef struct nodo_g{
+//==================
+// grafo.c
+//==================
+
+typedef struct punto {
     double x;
     double y;
-} Nodo_g;
+} Punto;
 
-typedef struct arista{
-    Nodo_g *nodo1;
-    Nodo_g *nodo2;
+typedef struct nodo {
+    double x;
+    double y;
+    struct Nodo *padre;
+    int size;
+} Nodo;
+
+typedef struct arista {
+    Nodo *nodo1;
+    Nodo *nodo2;
     double peso;
-    //(nodo1->x-nodo2->x)*(nodo1->x-nodo2->x) + (nodo1->y+nodo2->y)*(nodo1->y-nodo2->y)
 } Arista;
 
-typedef struct grafo{
-    int n ; // Número de nodos
-    Nodo_g **nodos;
-    int e; // Número de aristas
+typedef struct grafo {
+    int n ; //Número de nodos
+    Nodo **nodos;
+    int e; //Número de aristas
     Arista **aristas;
 } Grafo;
 
-typedef struct grafo Grafo; 
-Grafo* crear_grafo(int n, int e, Nodo_g** nodos, Arista** aristas);
-double calcular_peso(Nodo_g* n1, Nodo_g* n2);
-Nodo_g* crear_nodo(double x, double y);
-Arista* crear_arista(Nodo_g* n1, Nodo_g* n2);
+double calcular_peso(Nodo* n1, Nodo* n2);
+Nodo* crear_nodo(double x, double y);
+Arista* crear_arista(Nodo* n1, Nodo* n2);
+Grafo* crear_grafo(Punto **puntos, int n);
+void destruirGrafo(Grafo *g);
 
-//mergesort.c
-void merge(Arista** arr, Arista** aux, int inicio, int medio, int fin);
-void mergesort_RAM(Arista** arreglo, Arista** aux, int inicio, int fin);
+//==================
+// union_find.c
+//==================
 
-//union_find.c
-typedef struct nodo_uf {
-    Nodo_g *info;
-    //struct Nodo_uf** hijos;
-    //int num_hijos;
-    struct Nodo_uf *padre;
-    int size;
-} Nodo_uf;
+void union_(Nodo *x, Nodo *y);
+Nodo *find_normal(Nodo *x);
+Nodo *find_opti(Nodo *x);
 
-//sort.c
-int comparar_aristas(const void* a, const void* b);
-void sort_aristas(Arista** aristas, int n);
-int comparar_aristas_directo(void* a, void* b);
 
+//==================
+// kruskal.c
+//==================
+
+//(1) Sin optimización de find y usando arreglo de aristas
+Arista *kruskal_1(Grafo* g);
+
+//(2) Sin optimización de find y usando heap
+Arista *kruskal_2(Grafo* g);
+
+//(3) Con optimización de find y usando arreglo de aristas
+Arista *kruskal_3(Grafo* g);
+
+//(4) Con optimización de find y usando heap
+Arista *kruskal_4(Grafo* g);
 
 #endif // TAREA2_H
