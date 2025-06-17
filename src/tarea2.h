@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 
 //Funciones
 
@@ -38,7 +39,7 @@ void* extractMin(Heap* heap);
 void freeHeap(Heap* heap);
 void buildHeap(Heap* heap);
 Heap* heapifyArray(void** elems, int n, Comparator cmp);
- 
+
 
 //==================
 // grafo.c
@@ -52,7 +53,7 @@ typedef struct punto {
 typedef struct nodo {
     double x;
     double y;
-    struct Nodo *padre;
+    struct nodo *padre;
     int size;
 } Nodo;
 

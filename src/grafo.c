@@ -51,11 +51,11 @@ Grafo* crear_grafo(Punto **puntos, int n) {
 }
 
 void destruirGrafo(Grafo *g) {
-    for (int i=0; i<g->e; i++) {
-        free((g->aristas)[i]);
-    }
     for (int i=0; i<g->n; i++) {
         free((g->nodos)[i]);
+    }
+    for (int i=0; i<g->e; i++) {
+        free((g->aristas)[i]);
     }
     free(g->nodos);
     free(g->aristas);
