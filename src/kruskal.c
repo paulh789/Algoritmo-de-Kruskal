@@ -20,6 +20,7 @@ Arista *kruskal_1(Grafo* g) {
         }
         i++;
     }
+    free(E);
     return T;
 }
 
@@ -68,6 +69,7 @@ Arista *kruskal_3(Grafo* g) {
         }
         i++;
     }
+    free(E);
     return T;
 }
 
