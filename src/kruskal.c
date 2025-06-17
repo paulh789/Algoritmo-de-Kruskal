@@ -2,7 +2,8 @@
 
 // (1) Sin optimización de find y usando arreglo de aristas
 Arista *kruskal_1(Grafo* g) {
-    Arista **E = g->aristas;
+    Arista **E = malloc(g->e * sizeof(Arista*));
+    memcpy(E, g->aristas, g->e * sizeof(Arista*)); //copiar las aristas
     qsort(E, g->e, sizeof(Arista*), comparar_aristas_ptr); //ordenar aristas con quicksort
     Arista *T = malloc((g->n - 1) * sizeof(Arista)); //árbol cobertor mínimo
     int contador = 0; //contador de aristas del árbol T
@@ -24,7 +25,9 @@ Arista *kruskal_1(Grafo* g) {
 
 // (2) Sin optimización de find y usando heap
 Arista *kruskal_2(Grafo* g) {
-    Heap *E = heapifyArray((void**)g->aristas, g->e, (Comparator)comparar_aristas); //heapify del arreglo de aristas
+    Arista **copia_aristas = malloc(g->e * sizeof(Arista*));
+    memcpy(copia_aristas, g->aristas, g->e * sizeof(Arista*)); //copiar las aristas
+    Heap *E = heapifyArray((void**)copia_aristas, g->e, (Comparator)comparar_aristas); //heapify del arreglo de aristas
     Arista *T = malloc((g->n - 1) * sizeof(Arista)); //árbol cobertor mínimo
     int contador = 0; //contador de aristas de árbol T
 
@@ -39,14 +42,15 @@ Arista *kruskal_2(Grafo* g) {
             union_(x, y); //hacer union de los nodos representantes
         }
     }
-    free(E);
+    freeHeap(E);
     return T;
 }
 
 
 // (3) Con optimización de find y usando arreglo de aristas
 Arista *kruskal_3(Grafo* g) {
-    Arista **E = g->aristas;
+    Arista **E = malloc(g->e * sizeof(Arista*));
+    memcpy(E, g->aristas, g->e * sizeof(Arista*)); //copiar las aristas
     qsort(E, g->e, sizeof(Arista*), comparar_aristas_ptr); //ordenar aristas con quicksort
     Arista *T = malloc((g->n - 1) * sizeof(Arista)); //árbol cobertor mínimo
     int contador = 0; //contador de aristas de árbol T
@@ -62,13 +66,16 @@ Arista *kruskal_3(Grafo* g) {
             contador++;
             union_(x, y); //hacer union de los nodos representantes
         }
+        i++;
     }
     return T;
 }
 
 // (4) Con optimización de find y usando heap
 Arista *kruskal_4(Grafo* g) {
-    Heap *E = heapifyArray((void**)g->aristas, g->e, (Comparator)comparar_aristas); //heapify del arreglo de aristas
+    Arista **copia_aristas = malloc(g->e * sizeof(Arista*));
+    memcpy(copia_aristas, g->aristas, g->e * sizeof(Arista*)); //copiar las aristas
+    Heap *E = heapifyArray((void**)copia_aristas, g->e, (Comparator)comparar_aristas); //heapify del arreglo de aristas
     Arista *T = malloc((g->n - 1) * sizeof(Arista)); //árbol cobertor mínimo
     int contador = 0; //contador de aristas de arbol T
 
@@ -83,6 +90,6 @@ Arista *kruskal_4(Grafo* g) {
             union_(x, y); //hacer union de los nodos representantes
         }
     }
-    free(E);
+    freeHeap(E);
     return T;
 }
