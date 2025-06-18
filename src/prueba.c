@@ -59,40 +59,59 @@ int main() {
     Grafo *g2;
     Arista *T;    
 
-    // Kruskal 1
     g2 = crear_grafo(puntos2, 5);
+    printf("Probando con un grafo completo de 5 nodos:\n");
+    for (int i=0; i<5; i++) {
+        printf("(%.0f, %.0f)", g2->nodos[i]->x, g2->nodos[i]->y);
+        if (i < 4) {
+            printf(", ");
+        }
+        else {
+            printf("\n");
+        }
+    }
+    printf("Arista [peso]\n");
+    for (int i=0; i<g2->e; i++) {
+        printf("(%.0f, %.0f)-(%.0f, %.0f) [%.0f]\n", g2->aristas[i]->nodo1->x, g2->aristas[i]->nodo1->y, g2->aristas[i]->nodo2->x, g2->aristas[i]->nodo2->y, g2->aristas[i]->peso);
+    }
+    printf(" \n");
+
+    // Kruskal 1
     T = kruskal_1(g2);
-    printf("Prueba Kruskal 1\n");
+    printf("Resultado Kruskal 1\n");
     for (int i=0; i<4; i++) {
         printf("Arista %d: (%.0f, %.0f)-(%.0f, %.0f)\n", i+1, T[i].nodo1->x, T[i].nodo1->y, T[i].nodo2->x, T[i].nodo2->y);
     }
     free(g2);
     free(T);
+    printf(" \n");
 
     // Kruskal 2
     g2 = crear_grafo(puntos2, 5);
     T = kruskal_2(g2);
-    printf("Prueba Kruskal 2\n");
+    printf("Resultado Kruskal 2\n");
     for (int i=0; i<4; i++) {
         printf("Arista %d: (%.0f, %.0f)-(%.0f, %.0f)\n", i+1, T[i].nodo1->x, T[i].nodo1->y, T[i].nodo2->x, T[i].nodo2->y);
     }
     free(g2);
     free(T);
+    printf(" \n");
 
     // Kruskal 3
     g2 = crear_grafo(puntos2, 5);
     T = kruskal_3(g2);
-    printf("Prueba Kruskal 3\n");
+    printf("Resultado Kruskal 3\n");
     for (int i=0; i<4; i++) {
         printf("Arista %d: (%.0f, %.0f)-(%.0f, %.0f)\n", i+1, T[i].nodo1->x, T[i].nodo1->y, T[i].nodo2->x, T[i].nodo2->y);
     }
     free(g2);
     free(T);
+    printf(" \n");
 
     // Kruskal 4
     g2 = crear_grafo(puntos2, 5);
     T = kruskal_4(g2);
-    printf("Prueba Kruskal 4\n");
+    printf("Resultado Kruskal 4\n");
     for (int i=0; i<4; i++) {
         printf("Arista %d: (%.0f, %.0f)-(%.0f, %.0f)\n", i+1, T[i].nodo1->x, T[i].nodo1->y, T[i].nodo2->x, T[i].nodo2->y);
     }

@@ -12,6 +12,124 @@
 //Funciones
 
 //==================
+// grafo.c
+//==================
+
+/**
+ * @struct Punto
+ * @brief Representa un punto en el plano 2D.
+ *
+ * Contiene las coordenadas x e y del punto.
+ */
+typedef struct punto {
+    double x;
+    double y;
+} Punto;
+
+
+/**
+ * @struct Nodo
+ * @brief Representa un nodo para el algoritmo de Kruskal.
+ *
+ * Contiene coordenadas x e y, un puntero al padre para la estructura union-find,
+ * y un entero size que representa el tamaño del árbol.
+ */
+typedef struct nodo {
+    double x;
+    double y;
+    struct nodo *padre;
+    int size;
+} Nodo;
+
+/**
+ * @struct Arista
+ * @brief Representa una arista entre dos nodos en el grafo.
+ *
+ * Contiene punteros a los dos nodos que conecta y el peso de la arista.
+ */
+typedef struct arista {
+    Nodo *nodo1;
+    Nodo *nodo2;
+    double peso;
+} Arista;
+
+/**
+ * @struct Grafo
+ * @brief Representa al grafo que recibe kruskal.
+ *
+ * Contiene el número de nodos y aristas, así como arreglos de punteros a nodos y aristas.
+ */
+typedef struct grafo {
+    int n ; //Número de nodos
+    Nodo **nodos;
+    int e; //Número de aristas
+    Arista **aristas;
+} Grafo;
+
+/**
+ * @brief Calcula el peso (distancia al cuadrado) entre dos nodos.
+ *
+ * Esta función retorna el peso de la arista entre dos nodos, que es el
+ * cuadrado de la distancia euclidiana entre sus coordenadas.
+ *
+ * @param n1 Puntero al primer nodo.
+ * @param n2 Puntero al segundo nodo.
+ * @return double Peso (distancia al cuadrado) entre n1 y n2.
+ */
+double calcular_peso(Nodo* n1, Nodo* n2);
+
+/**
+ * @brief Crea un nuevo nodo con coordenadas dadas.
+ *
+ * Esta función reserva memoria para un nodo, inicializa sus coordenadas
+ * con los valores dados, y establece padre en NULL y size en 1.
+ *
+ * @param x Coordenada x del nodo.
+ * @param y Coordenada y del nodo.
+ * @return Nodo* Puntero al nodo creado (reservado con malloc).
+ * @throws Termina el programa si no puede asignar memoria.
+ */
+Nodo* crear_nodo(double x, double y);
+
+/**
+ * @brief Crea una nueva arista entre dos nodos.
+ *
+ * Esta función reserva memoria para una arista y la inicializa con los nodos
+ * dados y el peso calculado con `calcular_peso`.
+ *
+ * @param n1 Puntero al primer nodo.
+ * @param n2 Puntero al segundo nodo.
+ * @return Arista* Puntero a la arista creada (reservada con malloc).
+ * @throw Termina el programa si no puede asignar memoria.
+ */
+Arista* crear_arista(Nodo* n1, Nodo* n2);
+
+/**
+ * @brief Crea un grafo completo a partir de un arreglo de puntos.
+ *
+ * Esta función crea un grafo completo con `n` nodos, donde cada nodo corresponde
+ * a un punto dado y cada par de nodos está conectado con una arista cuyo peso
+ * es la distancia al cuadrado entre ellos.
+ *
+ * @param puntos Arreglo de punteros a puntos.
+ * @param n Cantidad de puntos (y nodos).
+ * @return Grafo* Puntero al grafo creado (reservado con malloc).
+ * @throw Termina el programa si no puede asignar memoria.
+ */
+Grafo* crear_grafo(Punto **puntos, int n);
+
+/**
+ * @brief Libera la memoria asociada a un grafo.
+ *
+ * Esta función libera toda la memoria reservada para los nodos, aristas y el
+ * propio grafo.
+ *
+ * @param g Puntero al grafo a destruir.
+ */
+void destruirGrafo(Grafo *g);
+
+
+//==================
 // sort.c
 //==================
 /**
@@ -27,6 +145,7 @@
  */
 
 int comparar_aristas(void* a, void* b);
+
 /**
  * @brief Compara dos punteros a aristas según su peso para ordenación.
  * 
@@ -40,11 +159,12 @@ int comparar_aristas(void* a, void* b);
  */
 int comparar_aristas_ptr(const void* a, const void* b);
 
+
 //==================
 // heap.c
 //==================
-
 // Adaptado de https://www.geeksforgeeks.org/c/heap-in-c/
+
 /**
  * @typedef Comparator
  * @brief Puntero a función para comparar dos elementos genéricos.
@@ -155,124 +275,6 @@ Heap* heapifyArray(void** elems, int n, Comparator cmp);
 
 
 //==================
-// grafo.c
-//==================
-
-/**
- * @struct Punto
- * @brief Representa un punto en el plano 2D.
- *
- * Contiene las coordenadas x e y del punto.
- */
-typedef struct punto {
-    double x;
-    double y;
-} Punto;
-
-
-/**
- * @struct Nodo
- * @brief Representa un nodo para el algoritmo de Kruskal.
- *
- * Contiene coordenadas x e y, un puntero al padre para la estructura de conjuntos disjuntos,
- * y un entero size que representa el tamaño del conjunto.
- */
-typedef struct nodo {
-    double x;
-    double y;
-    struct nodo *padre;
-    int size;
-} Nodo;
-
-/**
- * @struct Arista
- * @brief Representa una arista entre dos nodos en el grafo.
- *
- * Contiene punteros a los dos nodos que conecta y el peso de la arista.
- */
-typedef struct arista {
-    Nodo *nodo1;
-    Nodo *nodo2;
-    double peso;
-} Arista;
-
-/**
- * @struct Grafo
- * @brief Representa al grafo que recibe kruskal.
- *
- * Contiene el número de nodos y aristas, así como arreglos de punteros a nodos y aristas.
- */
-typedef struct grafo {
-    int n ; //Número de nodos
-    Nodo **nodos;
-    int e; //Número de aristas
-    Arista **aristas;
-} Grafo;
-
-/**
- * @brief Calcula el peso (distancia al cuadrado) entre dos nodos.
- *
- * Esta función retorna el peso de la arista entre dos nodos, que es la
- * distancia euclidiana al cuadrado entre sus coordenadas.
- *
- * @param n1 Puntero al primer nodo.
- * @param n2 Puntero al segundo nodo.
- * @return double Peso (distancia al cuadrado) entre n1 y n2.
- */
-double calcular_peso(Nodo* n1, Nodo* n2);
-
-/**
- * @brief Crea un nuevo nodo con coordenadas dadas.
- *
- * Esta función reserva memoria para un nodo, inicializa sus coordenadas
- * con los valores dados, y establece padre en NULL y size en 1.
- *
- * @param x Coordenada x del nodo.
- * @param y Coordenada y del nodo.
- * @return Nodo* Puntero al nodo creado (reservado con malloc).
- * @throws Termina el programa si no puede asignar memoria.
- */
-Nodo* crear_nodo(double x, double y);
-
-/**
- * @brief Crea una nueva arista entre dos nodos.
- *
- * Esta función reserva memoria para una arista y la inicializa con los nodos
- * dados y el peso calculado con `calcular_peso`.
- *
- * @param n1 Puntero al primer nodo.
- * @param n2 Puntero al segundo nodo.
- * @return Arista* Puntero a la arista creada (reservada con malloc).
- * @throw Termina el programa si no puede asignar memoria.
- */
-Arista* crear_arista(Nodo* n1, Nodo* n2);
-
-/**
- * @brief Crea un grafo completo a partir de un arreglo de puntos.
- *
- * Esta función crea un grafo completo con `n` nodos, donde cada nodo corresponde
- * a un punto dado y cada par de nodos está conectado con una arista cuyo peso
- * es la distancia al cuadrado entre ellos.
- *
- * @param puntos Arreglo de punteros a puntos.
- * @param n Cantidad de puntos (y nodos).
- * @return Grafo* Puntero al grafo creado (reservado con malloc).
- * @throw Termina el programa si no puede asignar memoria.
- */
-Grafo* crear_grafo(Punto **puntos, int n);
-
-
-/**
- * @brief Libera la memoria asociada a un grafo.
- *
- * Esta función libera toda la memoria reservada para los nodos, aristas y el
- * propio grafo.
- *
- * @param g Puntero al grafo a destruir.
- */
-void destruirGrafo(Grafo *g);
-
-//==================
 // union_find.c
 //==================
 
@@ -315,58 +317,59 @@ Nodo *find_opti(Nodo *x);
 // kruskal.c
 //==================
 
-//(1) Sin optimización de find y usando arreglo de aristas
+// (1) Sin optimización de find y usando arreglo de aristas
 /**
- * @brief Calcula el árbol de expansión mínima con Kruskal sin optimización y usando arreglo de aristas.
+ * @brief Calcula el árbol cobertor mínimo con Kruskal sin optimización y usando arreglo de aristas.
  *
  * Esta función copia las aristas del grafo, las ordena con qsort y aplica el algoritmo
  * de Kruskal sin optimización en la función find (búsqueda simple), usando un arreglo para las aristas.
  *
  * @param g Puntero al grafo.
- * @return Arista* Arreglo dinámico con las aristas del árbol de expansión mínima.
+ * @return Arista* Arreglo dinámico con las aristas del árbol cobertor mínimo.
  *                 El tamaño del arreglo es (g->n - 1).
  */
 Arista *kruskal_1(Grafo* g);
 
-//(2) Sin optimización de find y usando heap
+// (2) Sin optimización de find y usando heap
 /**
- * @brief Calcula el árbol de expansión mínima con Kruskal sin optimización y usando heap.
+ * @brief Calcula el árbol cobertor mínimo con Kruskal sin optimización y usando heap.
  *
  * Esta función copia las aristas del grafo, construye un heap para obtener la arista mínima,
  * y aplica el algoritmo de Kruskal sin optimización en la función find (búsqueda simple).
  *
  * @param g Puntero al grafo.
- * @return Arista* Arreglo dinámico con las aristas del árbol de expansión mínima.
+ * @return Arista* Arreglo dinámico con las aristas del árbol cobertor mínimo.
  *                 El tamaño del arreglo es (g->n - 1).
  */
 Arista *kruskal_2(Grafo* g);
 
-//(3) Con optimización de find y usando arreglo de aristas
+// (3) Con optimización de find y usando arreglo de aristas
 /**
- * @brief Calcula el árbol de expansión mínima con Kruskal con optimización y usando arreglo de aristas.
+ * @brief Calcula el árbol cobertor mínimo con Kruskal con optimización y usando arreglo de aristas.
  *
  * Esta función copia las aristas del grafo, las ordena con qsort y aplica el algoritmo
  * de Kruskal usando la versión optimizada de find (con compresión de caminos),
  * usando un arreglo para las aristas.
  *
  * @param g Puntero al grafo.
- * @return Arista* Arreglo dinámico con las aristas del árbol de expansión mínima.
+ * @return Arista* Arreglo dinámico con las aristas del árbol cobertor mínimo.
  *                 El tamaño del arreglo es (g->n - 1).
  */
 Arista *kruskal_3(Grafo* g);
 
-//(4) Con optimización de find y usando heap
+// (4) Con optimización de find y usando heap
 /**
- * @brief Calcula el árbol de expansión mínima con Kruskal con optimización y usando heap.
+ * @brief Calcula el árbol cobertor mínimo con Kruskal con optimización y usando heap.
  *
  * Esta función copia las aristas del grafo, construye un heap para obtener la arista mínima,
  * y aplica el algoritmo de Kruskal usando la versión optimizada de find (con compresión de caminos).
  *
  * @param g Puntero al grafo.
- * @return Arista* Arreglo dinámico con las aristas del árbol de expansión mínima.
+ * @return Arista* Arreglo dinámico con las aristas del árbol cobertor mínimo.
  *                 El tamaño del arreglo es (g->n - 1).
  */
 Arista *kruskal_4(Grafo* g);
+
 
 //==================
 // experimentacion.c
@@ -380,7 +383,6 @@ Arista *kruskal_4(Grafo* g);
  *
  * @param N Número de puntos a generar.
  * @return Punto** Arreglo de punteros a estructuras `Punto`.
- * @note La memoria asignada debe ser liberada utilizando `destruir_puntos`.
  */
 Punto **generar_puntos(int N);
 
